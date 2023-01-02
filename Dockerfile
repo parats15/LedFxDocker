@@ -1,5 +1,6 @@
-FROM python:3.9-buster
+# syntax = docker/dockerfile:1.2
 
+FROM python:3.9-buster
 WORKDIR /app
 ARG TAG
 RUN pip install Cython
@@ -38,8 +39,8 @@ RUN apt-get install -y wget \
 RUN apt-get install -y squeezelite 
 
 ARG TARGETPLATFORM
-RUN if [ "$TARGETPLATFORM" = "linux/arm/v7" ]; then ARCHITECTURE=armhf; elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then ARCHITECTURE=armhf; else ARCHITECTURE=amd64; fi \
-    && lastversion download badaix/snapcast --format assets --filter "^snapclient_(?:(\d+)\.)?(?:(\d+)\.)?(?:(\d+)\-)?(?:(\d)(_$ARCHITECTURE\.deb))$" -o snapclient.deb
+RUN --mount=type=secret,id=GITHUB_API_TOKEN if [ "$TARGETPLATFORM" = "linux/arm/v7" ]; then ARCHITECTURE=armhf; elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then ARCHITECTURE=armhf; else ARCHITECTURE=amd64; fi \
+    && export GITHUB_API_TOKEN=$(cat /run/secrets/GITHUB_API_TOKEN) && lastversion download badaix/snapcast --format assets --filter "^snapclient_(?:(\d+)\.)?(?:(\d+)\.)?(?:(\d+)\-)?(?:(\d)(_$ARCHITECTURE\.deb))$" -o snapclient.deb
 
 RUN apt-get install -fy ./snapclient.deb
 
