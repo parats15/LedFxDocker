@@ -29,6 +29,12 @@ jobs:
         uses: docker/setup-qemu-action@v2
       - name: Setup Docker buildx
         uses: docker/setup-buildx-action@v2
+      - id: lowercaseImage
+        uses: ASzc/change-string-case-action@v1
+        with:
+          string: ${{ github.repository }}
+      - run: |
+          echo "${{ steps.string.outputs.lowercase }}"
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
       - name: Log into registry ${{ env.REGISTRY }}
@@ -49,7 +55,7 @@ jobs:
         id: dockerVersion
         uses: docker/metadata-action@v4
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.REGISTRY }}/${{ steps.lowercaseImage.outputs.lowercase }}
       - name: Build and push Docker image
         id: build-and-push
         if: ${{ !contains(steps.dockerVersion.outputs.tags, steps.ledfxVersion.outputs.release)  }}
@@ -57,7 +63,7 @@ jobs:
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.ledfxVersion.outputs.release }}
+          tags: ${{ env.REGISTRY }}/${{ steps.lowercaseImage.outputs.lowercase }}:${{ steps.ledfxVersion.outputs.release }}
           cache-from: type=gha
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           cache-to: type=gha,mode=max
