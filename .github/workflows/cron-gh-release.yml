@@ -48,12 +48,12 @@ jobs:
       - name: Build and push Docker image
         id: build-and-push
         if: ${{ !contains(steps.dockerVersion.outputs.tags, steps.ledfxVersion.outputs.release)  }}
-        uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a
+        uses: docker/build-push-action@v3.2.0
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.ledfxVersion.outputs.release }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          build-args:
-            - TAG: ${{ steps.ledfxVersion.outputs.release }}
+          build-args: |
+            TAG=${{ steps.ledfxVersion.outputs.release }}
