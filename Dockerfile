@@ -40,8 +40,7 @@ ARG TARGETPLATFORM
 RUN --mount=type=secret,id=GITHUB_API_TOKEN if [ "$TARGETPLATFORM" = "linux/arm/v7" ]; then ARCHITECTURE=armhf; elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then ARCHITECTURE=armhf; else ARCHITECTURE=amd64; fi \
     && export GITHUB_API_TOKEN=$(cat /run/secrets/GITHUB_API_TOKEN) && lastversion download badaix/snapcast --format assets --filter "^snapclient_(?:(\d+)\.)?(?:(\d+)\.)?(?:(\d+)\-)?(?:(\d)(_$ARCHITECTURE\.deb))$" -o snapclient.deb
 
-RUN apt-get install -fy ./snapclient.deb
-
+RUN apt-get install -fy ./snapclient.deb && rm -rf /var/lib/apt/lists/*
 COPY setup-files/ /app/
 RUN chmod a+wrx /app/*
 
