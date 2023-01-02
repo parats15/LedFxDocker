@@ -65,5 +65,7 @@ jobs:
           cache-from: type=gha
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           cache-to: type=gha,mode=max
+          secrets: |
+            GITHUB_API_TOKEN=${{ secrets.GITHUB_TOKEN }}
           build-args: |
             TAG=${{ steps.ledfxVersion.outputs.release }}
