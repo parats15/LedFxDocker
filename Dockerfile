@@ -12,16 +12,17 @@ RUN apt-get install -y gcc \
 		       libavformat58 \
 		       portaudio19-dev \
 		       avahi-daemon \
-		       pulseaudio
-RUN pip install --upgrade pip wheel setuptools
-RUN pip install lastversion
-RUN pip install git+https://github.com/LedFx/LedFx@$TAG
+		       pulseaudio \
+                       alsa-utils \ 
+                       libnss-mdns \
+                       wget \
+                       libavahi-client3:armhf \
+                       libavahi-common3:armhf \
+                       apt-utils \
+                       libvorbisidec1:armhf \
+                       squeezelite
 
-RUN apt-get install -y alsa-utils
 RUN adduser root pulse-access
-
-# https://gnanesh.me/avahi-docker-non-root.html
-RUN apt-get install -y libnss-mdns
 RUN echo '*' > /etc/mdns.allow \
 	&& sed -i "s/hosts:.*/hosts:          files mdns4 dns/g" /etc/nsswitch.conf \
 	&& printf "[server]\nenable-dbus=no\n" >> /etc/avahi/avahi-daemon.conf \
@@ -30,13 +31,10 @@ RUN echo '*' > /etc/mdns.allow \
 	&& chown avahi:avahi /var/run/avahi-daemon \
 	&& chmod 777 /var/run/avahi-daemon
 
-RUN apt-get install -y wget \
-                       libavahi-client3:armhf \
-                       libavahi-common3:armhf \
-                       apt-utils \
-		       libvorbisidec1:armhf
+RUN pip install --upgrade pip wheel setuptools
+RUN pip install lastversion
+RUN pip install git+https://github.com/LedFx/LedFx@$TAG
 
-RUN apt-get install -y squeezelite 
 
 ARG TARGETPLATFORM
 RUN --mount=type=secret,id=GITHUB_API_TOKEN if [ "$TARGETPLATFORM" = "linux/arm/v7" ]; then ARCHITECTURE=armhf; elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then ARCHITECTURE=armhf; else ARCHITECTURE=amd64; fi \
