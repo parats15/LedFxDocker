@@ -1,7 +1,7 @@
 FROM python:3.9-buster
 
 WORKDIR /app
-
+ARG TAG
 RUN pip install Cython
 RUN dpkg --add-architecture armhf
 RUN apt-get update
@@ -14,7 +14,7 @@ RUN apt-get install -y gcc \
 		       pulseaudio
 RUN pip install --upgrade pip wheel setuptools
 RUN pip install lastversion
-RUN pip install git+https://github.com/LedFx/LedFx
+RUN pip install git+https://github.com/LedFx/LedFx@$TAG
 
 RUN apt-get install -y alsa-utils
 RUN adduser root pulse-access
