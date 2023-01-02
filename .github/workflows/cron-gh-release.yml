@@ -61,7 +61,9 @@ jobs:
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ steps.lowercaseImage.outputs.lowercase }}:${{ steps.ledfxVersion.outputs.release }}
+          tags: |
+            ${{ env.REGISTRY }}/${{ steps.lowercaseImage.outputs.lowercase }}:${{ steps.ledfxVersion.outputs.release }}
+            ${{ env.REGISTRY }}/${{ steps.lowercaseImage.outputs.lowercase }}:latest
           cache-from: type=gha
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           cache-to: type=gha,mode=max
