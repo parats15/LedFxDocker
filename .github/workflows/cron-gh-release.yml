@@ -2,7 +2,7 @@ name: Cron release from upstream
 on:
   workflow_dispatch:
   schedule:
-    - cron: '30 * * * *'
+    - cron: '22 */2 * * *'
 
 env:
   # Use docker.io for Docker Hub if empty
