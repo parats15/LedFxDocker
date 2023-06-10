@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  ledfx:
+    image: parats15/ledfx
+    container_name: ledfx
+    environment: 
+      - VBAN_HOST=clientIp
+      - VBAN_PORT=6980
+      - VBAN_STREAMNAME=Stream1
+    ports:
+      - 6980:6980
+    volumes:
+      - ./ledfx-config:/root/.ledfx

@@ -12,6 +12,10 @@ if [[ -v FORMAT ]]; then
     ./pipe-audio.sh
 fi
 
+if [[ -v VBAN_HOST ] && [ -v VBAN_PORT ] && [ -v VBAN_STREAMNAME ]]; then
+    vban_receptor -i "$VBAN_HOST" -p"$VBAN_PORT" -s"$VBAN_STREAMNAME"
+fi
+
 if [[ -v HOST ]]; then
     snapclient --host "$HOST" --daemon 1
 fi

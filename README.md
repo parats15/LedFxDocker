@@ -4,7 +4,7 @@
 A Docker Image for [LedFx](https://github.com/LedFx/LedFx.git). 
 
 ## Introduction
-Compiling LedFx to run on different systems is difficult because of all the dependencies. It's especially difficult on a Raspberry Pi (building LedFx on ARM takes over 2 hours). This image has everything built for you, and it can get audio from a [Snapcast server](https://github.com/badaix/snapcast) or a [named pipe](https://www.linuxjournal.com/article/2156).
+Compiling LedFx to run on different systems is difficult because of all the dependencies. It's especially difficult on a Raspberry Pi (building LedFx on ARM takes over 2 hours). This image has everything built for you, and it can get audio from a [Snapcast server](https://github.com/badaix/snapcast), a [named pipe](https://www.linuxjournal.com/article/2156) or [Vban](https://vb-audio.com/Voicemeeter/vban.htm).
 
 ## Supported Architectures
 This image supports `x86-64`, `arm` and `arm64`. Docker will automatically pull the appropriate version. 
@@ -90,6 +90,12 @@ Just click the button below to deploy it!
 See [LedFx-balenaSound](https://github.com/ShiromMakkad/LedFx-balenaSound) for hardware requirements and other information. 
 
 You could also run a standalone instance of balenaSound on one device, LedFx on another device, and connect the two using the `HOST` environment variable. 
+
+### Vban
+
+You can send audio directly from Vban, you can use [Voicemeeter-Vban](https://vb-audio.com/Voicemeeter/vban.htm).
+You'll need to set the environment variable VBAN_HOST to your Vban IP sender instance VBAN_PORT with sender port default `VBAN_PORT=6980`
+and VBAN_STREAMNAME default `VBAN_STREAMNAME=Stream1`
 
 ## Support Information
 - Shell access while the container is running: `docker exec -it ledfx /bin/bash`

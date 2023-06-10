@@ -9,10 +9,10 @@ RUN apt-get update
 RUN apt-get install -y gcc \
                        git \
                        libatlas3-base \
-		       libavformat58 \
-		       portaudio19-dev \
-		       avahi-daemon \
-		       pulseaudio \
+                       libavformat58 \
+                       portaudio19-dev \
+                       avahi-daemon \
+                       pulseaudio \
                        alsa-utils \ 
                        libnss-mdns \
                        wget \
@@ -20,7 +20,14 @@ RUN apt-get install -y gcc \
                        libavahi-common3:armhf \
                        apt-utils \
                        libvorbisidec1:armhf \
-                       squeezelite
+                       squeezelite \
+                       git \
+                       make \
+                       autotools-dev \
+                       automake \
+                       libasound2-dev \
+                       libpulse-dev \
+                       libjack-dev
 
 RUN adduser root pulse-access
 RUN echo '*' > /etc/mdns.allow \
@@ -34,7 +41,8 @@ RUN echo '*' > /etc/mdns.allow \
 RUN pip install --upgrade pip wheel setuptools
 RUN pip install lastversion
 RUN pip install git+https://github.com/LedFx/LedFx@$TAG
-
+RUN git clone https://github.com/quiniouben/vban.git /install/vban
+RUN cd /install/vban && ./autogen.sh && ./configure && make && make install && cd / && rm -r /install
 
 ARG TARGETPLATFORM
 RUN --mount=type=secret,id=GITHUB_API_TOKEN if [ "$TARGETPLATFORM" = "linux/arm/v7" ]; then ARCHITECTURE=armhf; elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then ARCHITECTURE=armhf; else ARCHITECTURE=amd64; fi \
