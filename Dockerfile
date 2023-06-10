@@ -41,21 +41,29 @@ RUN pip install --upgrade pip wheel setuptools
 RUN pip install lastversion
 RUN pip install numpy
 RUN pip install git+https://github.com/LedFx/LedFx@$TAG
-RUN git clone https://github.com/quiniouben/vban.git /install/vban
-RUN cd /install/vban \
+RUN git clone https://github.com/quiniouben/vban.git vban
+RUN cd vban \
     && ./autogen.sh \
     && ./configure \
     && make \
     && make install \
-    && rm -r /install
+    && cd .. \
+    && rm -r vban
 
-WORKDIR /app
 ARG TARGETPLATFORM
 RUN --mount=type=secret,id=GITHUB_API_TOKEN if [ "$TARGETPLATFORM" = "linux/arm/v7" ]; then ARCHITECTURE=armhf; elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then ARCHITECTURE=armhf; else ARCHITECTURE=amd64; fi \
     && export GITHUB_API_TOKEN=$(cat /run/secrets/GITHUB_API_TOKEN) && lastversion download badaix/snapcast --format assets --filter "^snapclient_(?:(\d+)\.)?(?:(\d+)\.)?(?:(\d+)\-)?(?:(\d)(_$ARCHITECTURE\.deb))$" -o snapclient.deb
 
 RUN apt-get install -fy ./snapclient.deb && rm -rf /var/lib/apt/lists/*
-COPY setup-files/ /app/
+COPY ./setup-files/ /app/
 RUN chmod a+wrx /app/*
 
-ENTRYPOINT ./entrypoint.sh
+# Clean
+RUN apt autoremove  -y gcc \
+                       git \
+                       wget \
+                       make \
+                       autotools-dev \
+                       automake
+
+ENTRYPOINT ["./entrypoint.sh"]
