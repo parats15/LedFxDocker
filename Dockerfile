@@ -1,6 +1,6 @@
 # syntax = docker/dockerfile:1.2
 
-FROM python:3.9-buster
+FROM python:buster
 WORKDIR /app
 ARG TAG
 RUN pip install Cython
@@ -21,7 +21,6 @@ RUN apt-get install -y gcc \
                        apt-utils \
                        libvorbisidec1:armhf \
                        squeezelite \
-                       git \
                        make \
                        autotools-dev \
                        automake \
@@ -40,10 +39,17 @@ RUN echo '*' > /etc/mdns.allow \
 
 RUN pip install --upgrade pip wheel setuptools
 RUN pip install lastversion
+RUN pip install numpy
 RUN pip install git+https://github.com/LedFx/LedFx@$TAG
 RUN git clone https://github.com/quiniouben/vban.git /install/vban
-RUN cd /install/vban && ./autogen.sh && ./configure && make && make install && cd / && rm -r /install
+RUN cd /install/vban \
+    && ./autogen.sh \
+    && ./configure \
+    && make \
+    && make install \
+    && rm -r /install
 
+WORKDIR /app
 ARG TARGETPLATFORM
 RUN --mount=type=secret,id=GITHUB_API_TOKEN if [ "$TARGETPLATFORM" = "linux/arm/v7" ]; then ARCHITECTURE=armhf; elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then ARCHITECTURE=armhf; else ARCHITECTURE=amd64; fi \
     && export GITHUB_API_TOKEN=$(cat /run/secrets/GITHUB_API_TOKEN) && lastversion download badaix/snapcast --format assets --filter "^snapclient_(?:(\d+)\.)?(?:(\d+)\.)?(?:(\d+)\-)?(?:(\d)(_$ARCHITECTURE\.deb))$" -o snapclient.deb
